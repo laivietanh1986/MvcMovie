@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using MvcMovie.Data;
+using MvcMovie.Midware;
 using MvcMovie.Models;
 using MvcMovie.Services;
 
@@ -48,6 +49,7 @@ namespace MvcMovie
                 .AddDefaultTokenProviders();
 
             services.AddMvc();
+            
 
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
@@ -57,7 +59,8 @@ namespace MvcMovie
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+            loggerFactory.AddConsole(minLevel:LogLevel.Information);
+            app.UseRequestLogger();
             loggerFactory.AddDebug();
 
             if (env.IsDevelopment())
