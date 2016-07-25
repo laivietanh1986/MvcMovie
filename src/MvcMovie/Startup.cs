@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
+using MvcMovie.Configuration;
 using MvcMovie.Data;
 using MvcMovie.Midware;
 using MvcMovie.Models;
@@ -29,15 +30,21 @@ namespace MvcMovie
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
                 ;
+            builder.AddInMemoryCollection(new Dictionary<string, string>()
+            {
+               ["Ten"]="Viet Anh",
+               ["Phone"]="0906766345"
+            });
 
             if (env.IsDevelopment())
-            {
+            {       
                 // For more details on using the user secret store see http://go.microsoft.com/fwlink/?LinkID=532709
                 builder.AddUserSecrets();
             }
 
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
+            
         }
 
         public IConfigurationRoot Configuration { get; }
@@ -54,11 +61,19 @@ namespace MvcMovie
                 .AddDefaultTokenProviders();
 
             services.AddMvc();
+
+            services.AddOptions();
             
+            services.Configure<MyOptions>(options =>
+            {
+                options.Name = "Viet Anh";
+                options.PhoneNumber = "0906766345";
+            });
 
             // Add application services.
             services.AddTransient<IEmailSender, AuthMessageSender>();
             services.AddTransient<ISmsSender, AuthMessageSender>();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -106,7 +121,9 @@ namespace MvcMovie
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{id?}");
+                    template: "{controller=Home}/{action=Index}/{id?}"
+                    );
+                
             });
         }
     }

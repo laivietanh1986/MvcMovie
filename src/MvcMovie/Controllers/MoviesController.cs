@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using MvcMovie.Configuration;
 using MvcMovie.Data;
 using MvcMovie.Models;
 
@@ -13,15 +15,21 @@ namespace MvcMovie.Controllers
     public class MoviesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IOptions<MyOptions> _options; 
 
-        public MoviesController(ApplicationDbContext context)
+
+        public MoviesController(ApplicationDbContext context,IOptions<MyOptions> options )
         {
-            _context = context;    
+            _context = context;
+            _options = options;
+
         }
 
         // GET: Movies
         public async Task<IActionResult> Index()
         {
+            ViewBag.Name = _options.Value.Name;
+            ViewBag.Phone = _options.Value.PhoneNumber;
             return View(await _context.Movie.ToListAsync());
         }
 
