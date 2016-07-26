@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using MvcMovie.Configuration;
+using MvcMovie.CustomeProvider;
 using MvcMovie.Data;
 using MvcMovie.Midware;
 using MvcMovie.Models;
@@ -44,7 +45,14 @@ namespace MvcMovie
 
             builder.AddEnvironmentVariables();
             Configuration = builder.Build();
-            
+
+            var config = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+                .AddEntityFrameworkConfig(optionsBuilder => optionsBuilder.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")))
+                .Build();
+
         }
 
         public IConfigurationRoot Configuration { get; }

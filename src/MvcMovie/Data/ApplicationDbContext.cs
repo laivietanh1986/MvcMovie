@@ -4,12 +4,17 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using MvcMovie.CustomeProvider;
 using MvcMovie.Models;
 
 namespace MvcMovie.Data
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
+        public ApplicationDbContext()
+        {
+            
+        }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
@@ -22,7 +27,7 @@ namespace MvcMovie.Data
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
         }
-
+        public DbSet<ConfigurationValue> Values { get; set; }
         public DbSet<Movie> Movie { get; set; }
     }
 }
